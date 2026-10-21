@@ -12,7 +12,6 @@
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://static.wixstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -27,15 +26,7 @@
 
   <header class="nav" id="top">
     <div class="nav__inner">
-      <a class="brand" href="#top" aria-label="Scuba Murcia home">
-        <svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true">
-          <circle cx="20" cy="20" r="18" fill="none" stroke="currentColor" stroke-width="2.5"/>
-          <path d="M8 23c4-4 8-4 12 0s8 4 12 0" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-          <circle cx="24" cy="13" r="2.4" fill="currentColor"/>
-          <circle cx="18" cy="9" r="1.5" fill="currentColor"/>
-        </svg>
-        <span>Scuba<strong>Murcia</strong></span>
-      </a>
+      <a class="brand" href="#top"><img class="brand__logo" src="assets/logos/scuba-murcia.png" alt="Scuba Murcia" width="853" height="445"></a>
       <nav aria-label="Main">
         <button class="nav__toggle" aria-expanded="false" aria-controls="nav-menu">
           <span class="sr-only">Menu</span><span></span><span></span>
@@ -73,8 +64,13 @@
           <li><strong>4 agencies</strong><span>PADI · SSI<br>TDI · PSAI</span></li>
           <li><strong>30 min</strong><span>from Corvera<br>(Murcia) Airport</span></li>
         </ul>
+        <ul class="agencies" aria-label="Training agencies">
+          <li><img src="assets/logos/padi.png" alt="PADI 5 Star Dive Centre" width="200" height="100"></li>
+          <li><img src="assets/logos/ssi.png" alt="SSI" width="150" height="80"></li>
+          <li><img src="assets/logos/tdi.png" alt="TDI, Technical Diving International" width="200" height="100"></li>
+          <li><img class="agencies__boxed" src="assets/logos/psai.jpg" alt="PSAI, Professional Scuba Association International" width="240" height="190"></li>
+        </ul>
       </div>
-      <a class="hero__scroll" href="#intro" aria-label="Scroll down"><span></span></a>
       <svg class="hero__wave" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
         <path d="M0 64c120 32 240 48 360 40s240-40 360-40 240 32 360 40 240-8 360-24v40H0z" fill="var(--bg)"/>
       </svg>
@@ -294,49 +290,49 @@
           <p>The Islas Hormigas marine reserve was set up in 1995, and its marine life now thrives. Here are a few of our favourites.</p>
         </header>
         <div class="sites">
-          <article class="site site--big reveal" style="--img: url('https://static.wixstatic.com/media/a5c1a1_06fa9aadd05349b385ef0965fd688767~mv2.jpg/v1/fill/w_900,h_1100,al_c,q_80,enc_auto/Amberjacks.jpg')">
+          <article class="site site--big reveal" style="--img: url('assets/img/bajo-de-fuera.jpg')">
             <div class="site__depth">Max 60 m+</div>
             <h3>Bajo de Fuera</h3>
             <p>The most protected spot in the reserve. Huge schools of amberjack, dentex, giant groupers, eagle rays, and three wrecks scattered across the reef.</p>
             <span class="site__level">Advanced with experience</span>
           </article>
-          <article class="site reveal" style="--img: url('https://static.wixstatic.com/media/a5c1a1_ff3ac916d0974c2ab5838345e2216b6c~mv2.jpg/v1/fill/w_700,h_600,al_c,q_80,enc_auto/Grouper.jpg')">
+          <article class="site reveal" style="--img: url('assets/img/islas-hormigas.jpg')">
             <div class="site__depth">40 m+</div>
             <h3>Islas Hormigas</h3>
             <p>Seven reserve sites, with reefs rising from the depths to just below the surface.</p>
             <span class="site__level">Advanced</span>
           </article>
-          <article class="site reveal" style="--img: url('https://static.wixstatic.com/media/a5c1a1_7fab5b8357d24b05907e6652868c3243~mv2.jpg/v1/fill/w_700,h_600,al_c,q_80,enc_auto/Naranjito.jpg')">
+          <article class="site reveal" style="--img: url('assets/img/naranjito.jpg')">
             <div class="site__depth">28–42 m</div>
             <h3>Naranjito wreck</h3>
             <p>Sunk in a 1946 storm carrying oranges. Intact and upright, with barracuda and the odd sunfish.</p>
             <span class="site__level">Advanced</span>
           </article>
-          <article class="site reveal" style="--img: url('https://static.wixstatic.com/media/a5c1a1_09ba3abefa86462d88db19e2899ef373~mv2.jpg/v1/fill/w_700,h_600,al_c,q_80,enc_auto/Carbonero.jpg')">
+          <article class="site reveal" style="--img: url('assets/img/carbonero.jpg')">
             <div class="site__depth">45 m</div>
             <h3>Carbonero wreck</h3>
             <p>An 88 m coal ship torpedoed in 1917. Upright, with plenty of room to penetrate.</p>
             <span class="site__level">Deep / technical</span>
           </article>
-          <article class="site reveal" style="--img: url('https://static.wixstatic.com/media/a5c1a1_c18c08f2c33841a7a263977235acf9a9~mv2.jpg/v1/fill/w_700,h_600,al_c,q_80,enc_auto/Stanfield.jpg')">
+          <article class="site reveal" style="--img: url('assets/img/stanfield.jpg')">
             <div class="site__depth">44–65 m</div>
             <h3>SS Stanfield</h3>
             <p>A 120 m Greek cargo ship lost in 1916, almost completely intact on the sand.</p>
             <span class="site__level">Trimix</span>
           </article>
-          <article class="site reveal" style="--img: url('https://static.wixstatic.com/media/a5c1a1_61d61edd8c0c416a8ee1ebe2b0ebff23~mv2.jpg/v1/fill/w_700,h_600,al_c,q_80,enc_auto/Cueva.jpg')">
+          <article class="site reveal" style="--img: url('assets/img/cueva-del-agua.jpg')">
             <div class="site__depth">29 °C</div>
             <h3>Cueva del Agua</h3>
             <p>A rare warm-water cenote, 45 minutes from the centre, with crystal-clear water.</p>
             <span class="site__level">Cave qualified</span>
           </article>
-          <article class="site reveal" style="--img: url('https://static.wixstatic.com/media/a5c1a1_6177ec7e42874235bdc54bfb399823a1~mv2.jpg/v1/fill/w_700,h_600,al_c,q_80,enc_auto/GrandCanyon.jpg')">
+          <article class="site reveal" style="--img: url('assets/img/grand-canyon.jpg')">
             <div class="site__depth">Max 14 m</div>
             <h3>Grand Canyon</h3>
             <p>A shore-dive maze of channels and gorges ending in a cavern streaming with light.</p>
             <span class="site__level">Open Water</span>
           </article>
-          <article class="site reveal" style="--img: url('https://static.wixstatic.com/media/a5c1a1_9cb76185088548a3bd457739c52e0144~mv2.jpg/v1/fill/w_700,h_600,al_c,q_80,enc_auto/CalaFria.jpg')">
+          <article class="site reveal" style="--img: url('assets/img/cala-fria.jpg')">
             <div class="site__depth">Max 12 m</div>
             <h3>Cala Fría</h3>
             <p>Beneath the Cabo de Palos lighthouse: octopus, stingrays and swim-throughs.</p>
@@ -374,13 +370,13 @@
         </header>
         <div class="team">
           <article class="person reveal">
-            <div class="person__photo" style="--img: url('https://static.wixstatic.com/media/a5c1a1_d0ae2b85dca5460ebf0477b865388814~mv2.jpg/v1/fill/w_400,h_400,al_c,q_80,enc_auto/Ed.jpg')"><span>ES</span></div>
+            <div class="person__photo" style="--img: url('assets/img/ed-smith.jpg')"><span>ES</span></div>
             <h3>Ed Smith</h3>
             <p class="person__role">Technical &amp; recreational instructor</p>
             <p>25+ years and 6,000+ dives worldwide. PADI Staff Instructor, SSI Instructor, TDI and PSAI technical and cave instructor.</p>
           </article>
           <article class="person reveal">
-            <div class="person__photo" style="--img: url('https://static.wixstatic.com/media/a5c1a1_6608ff8b76aa41aa9e35127984f19f66~mv2.jpg/v1/fill/w_400,h_400,al_c,q_80,enc_auto/Jo.jpg')"><span>JG</span></div>
+            <div class="person__photo" style="--img: url('assets/img/jo-golder.jpg')"><span>JG</span></div>
             <h3>Jo Golder</h3>
             <p class="person__role">Sidemount specialist &amp; bookings</p>
             <p>12+ years and 2,000+ dives. PADI MSDT, SSI Instructor, sidemount instructor and cave diver. Ask her about nudibranchs.</p>
@@ -462,7 +458,13 @@
 
   <footer class="footer">
     <div class="container footer__inner">
-      <a class="brand" href="#top"><span>Scuba<strong>Murcia</strong></span></a>
+      <a class="brand" href="#top"><img class="brand__logo" src="assets/logos/scuba-murcia.png" alt="Scuba Murcia" width="853" height="445"></a>
+      <ul class="agencies agencies--small" aria-label="Training agencies">
+        <li><img src="assets/logos/padi.png" alt="PADI" width="200" height="100"></li>
+        <li><img src="assets/logos/ssi.png" alt="SSI" width="150" height="80"></li>
+        <li><img src="assets/logos/tdi.png" alt="TDI" width="200" height="100"></li>
+        <li><img class="agencies__boxed" src="assets/logos/psai.jpg" alt="PSAI" width="240" height="190"></li>
+      </ul>
       <p>PADI 5 Star Dive Centre · SSI · TDI · PSAI<br>La Manga del Mar Menor, Murcia, Spain</p>
       <p class="footer__small">© <span id="year">2026</span> Scuba Murcia. All rights reserved.</p>
     </div>
