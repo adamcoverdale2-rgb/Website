@@ -68,6 +68,15 @@
     });
   });
 
+  // Team photos: hide the initials only once the photo has actually loaded
+  document.querySelectorAll('.person__photo[style]').forEach((el) => {
+    const url = getComputedStyle(el).getPropertyValue('--img').match(/url\(['"]?([^'")]+)/);
+    if (!url) return;
+    const img = new Image();
+    img.onload = () => el.classList.add('img-ok');
+    img.src = url[1];
+  });
+
   // Reveal on scroll
   const revealEls = document.querySelectorAll('.reveal');
   if ('IntersectionObserver' in window && !reduceMotion) {

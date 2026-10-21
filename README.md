@@ -13,7 +13,11 @@ No build step. Open `index.html` directly, or serve the folder:
 python3 -m http.server 8000
 ```
 
+## Content
+Copy, prices, dive sites and team details come from the current scubamurcia.com (October 2026).
+Photos are linked from the existing site's image host (`static.wixstatic.com`); each photo has a gradient fallback.
+
 ## Before going live
-- Confirm prices, opening hours and the enquiry email (`scuba.murcia@outlook.com`).
-- Swap the gradient dive-site tiles for real underwater photos.
-- Add genuine customer reviews if wanted.
+- Download the photos into `assets/` rather than linking them from Wix, so the new site doesn't depend on the old one.
+- Add photos for Louise and Kate (they show initials for now).
+- Add opening hours if you want them shown. The current site doesn't list them.
