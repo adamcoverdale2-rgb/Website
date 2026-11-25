@@ -21,4 +21,5 @@ Copy, course list, pool night details and hire prices come from the current dive
 - **Course prices.** Only the Open Water price (£400–£800, shown as "From £400") is listed on the current site. Add others if you want them shown.
 - **Gas fill prices** and the **Dive Club** membership fee aren't included. Those pages weren't copied over.
 - **Reviews.** The hero links to the Google reviews (5.0, 20 reviews). Update the count as it grows.
-- **Booking.** The form opens an email. To take bookings or payments directly, link the Square shop or the SSI booking calendar instead.
+- **Booking.** "Book a course" (header and hero), "Book a pool night" and the shop links go to the Square shop at divewithimmy.square.site. That's the shop's real address, spelled without the J; divewithjimmy.square.site returns a 404. Open Water "Book now" goes straight to the Open Water checkout the current site uses. Course cards and "Join the club" still open the enquiry form, because no matching shop products could be confirmed. Swap in direct checkout links as products are added.
+- **Pool nights** are booked through the SSI calendar on the current site. Make sure the Square shop sells them, or point that button back at the SSI calendar.

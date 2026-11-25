@@ -123,6 +123,8 @@ small, .small { color: var(--muted); font-size: .875rem; }
 .feature img { width: 100%; height: 100%; object-fit: cover; min-height: 280px; }
 .feature__body { padding: clamp(24px, 4vw, 44px); }
 .feature__foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 1.2rem; }
+.feature__actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.feature__actions > a:not(.btn) { font-weight: 600; font-size: .95rem; }
 .tag { display: inline-block; font: 600 .75rem/1 var(--body); text-transform: uppercase; letter-spacing: .1em; color: var(--teal); border: 1px solid currentColor; border-radius: 999px; padding: .45em .8em; }
 .price { font: 800 2.4rem/1 var(--display); margin: 0; }
 .price small { font: 500 .9rem var(--body); margin-right: .3em; }
