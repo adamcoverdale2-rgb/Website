@@ -18,8 +18,63 @@ COURSES = DATA["courses"]
 BY_SLUG = {c["s"]: c for c in COURSES}
 CAT = {c["id"]: c for c in CATS}
 
+# Upcoming sessions from Jimmy's SSI / Scubago calendar (refresh with src/whatson.py)
+_EV = SITE / "src" / "events.json"
+EVENTS_DATA = json.loads(_EV.read_text()) if _EV.exists() else {"events": [], "fetched": ""}
+SCUBAGO = EVENTS_DATA.get("calendar", "https://www.scubago.com/center/744483")
+SSI_CAL = "https://my.divessi.com/extern/events/744483/"
+# SSI programme codes used in the calendar -> course page
+PROGRAMS = {"TS-P": "try-scuba-diving", "TFRD": "try-freediving", "SC-DRY": "ssi-dry-suit-diving",
+            "SC-EAN": "ssi-enriched-air-nitrox", "SC-SR": "ssi-diver-stress-rescue",
+            "SC-CCRTXR-AP": "ssi-ccr-technical-extended-range", "OWD": "ssi-open-water-diver",
+            "SD": "ssi-scuba-diver", "BD": "ssi-basic-diver", "SC-DEEP": "ssi-deep-diving",
+            "SC-NAV": "ssi-navigation", "SC-NLV": "ssi-night-limited-visibility", "SC-PB": "ssi-perfect-buoyancy",
+            "SC-WRECK": "ssi-wreck-diving", "SC-SSU": "ssi-scuba-skills-update", "SKD": "ssi-snorkel-diver",
+            "BFRD": "ssi-basic-freediver", "SC-RR": "ssi-react-right", "SC-CCR-AP": "ssi-ccr-diving"}
+
+
+def event_slug(ev):
+    if ev.get("program") in PROGRAMS:
+        return PROGRAMS[ev["program"]]
+    t = ev["title"].lower()
+    if "pool night" in t:
+        return "pool"
+    for c in COURSES:
+        if c["n"].lower().replace("ssi ", "") == t:
+            return c["s"]
+    return ""
+
+
+from datetime import date as _date
+TODAY = _date.today().isoformat()
+EVENTS = [dict(ev, slug=event_slug(ev)) for ev in EVENTS_DATA["events"] if ev.get("end", ev.get("start", "")) >= TODAY]
+
+
+def fmt_date(ev, short=False):
+    from datetime import date as d
+    a = d.fromisoformat(ev["start"]); b = d.fromisoformat(ev.get("end", ev["start"]))
+    f = "%a %-d %b" if short else "%A %-d %B %Y"
+    return a.strftime(f) if a == b else f"{a.strftime('%-d %b')} – {b.strftime('%-d %b %Y')}"
+
+
+def event_card(ev, root):
+    from datetime import date as d
+    a = d.fromisoformat(ev["start"])
+    link = ""
+    if ev["slug"] == "pool":
+        link = f'<a href="{root}pool-nights.html">About pool nights</a>'
+    elif ev["slug"]:
+        link = f'<a href="{root}courses/{ev["slug"]}.html">Course details</a>'
+    price = f'£{ev["price"]:,.0f}' if ev.get("price") else ""
+    return f'''<li class="ev">
+  <div class="ev__date"><span>{a.strftime("%a")}</span><strong>{a.day}</strong><span>{a.strftime("%b")}</span></div>
+  <div class="ev__body"><h3>{e(ev["title"])}</h3><p class="ev__when">{fmt_date(ev)}{" · " + price if price else ""}</p>
+  <p class="ev__links"><a class="btn btn--sm" href="{e(ev["url"])}">Book this date</a>{link}</p></div>
+</li>'''
+
 NAV = [
     ("courses/index.html", "Courses", "courses"),
+    ("whats-on.html", "What's on", "whatson"),
     ("pool-nights.html", "Pool nights", "pool"),
     ("gas-fills.html", "Gas & kit", "services"),
     ("expeditions.html", "Expeditions", "expeditions"),
@@ -76,6 +131,7 @@ def footer(root):
     </div>
     <div><h2>Courses</h2><ul>{cols}</ul></div>
     <div><h2>Dive centre</h2><ul>
+      <li><a href="{root}whats-on.html">What's on</a></li>
       <li><a href="{root}pool-nights.html">Pool nights</a></li>
       <li><a href="{root}gas-fills.html">Air &amp; gas fills</a></li>
       <li><a href="{root}servicing.html">Servicing</a></li>
@@ -105,7 +161,7 @@ def page(path, title, desc, body, active="", root="", og_img="assets/img/team.jp
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{e(title)}</title>
 <meta name="description" content="{e(desc)}">
-<meta name="theme-color" content="#071521">
+<meta name="theme-color" content="#ffffff">
 <meta property="og:title" content="{e(title)}">
 <meta property="og:description" content="{e(desc)}">
 <meta property="og:type" content="website">
@@ -113,7 +169,7 @@ def page(path, title, desc, body, active="", root="", og_img="assets/img/team.jp
 <link rel="icon" href="{root}assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{root}styles.css">
 <script>document.documentElement.classList.replace('no-js','js')</script>
 </head>
@@ -164,10 +220,13 @@ def card(c, root):
         pt = f"From £{min(amounts):,.0f}"
     return f'''<li class="ccard" data-agency="{c["a"]}" data-name="{e(c["n"].lower())}">
   <a href="{root}courses/{c["s"]}.html">
+    <img class="ccard__img" src="{root}assets/img/{c["img"]}" alt="" loading="lazy">
+    <span class="ccard__body">
     <span class="badge badge--{c["a"].lower()}">{c["a"]}</span>
     <h3>{e(c["n"])}</h3>
     <p>{e(c["lede"])}</p>
     <span class="ccard__foot"><span class="ccard__meta">{"".join(meta)}</span><strong>{e(pt) if pt else "Enquire"}</strong></span>
+    </span>
   </a>
 </li>'''
 
@@ -199,6 +258,12 @@ def course_page(c):
     ref = ""
     if c.get("ref"):
         ref = f'<p class="small aside__ref">Training to <a href="{c["ref"]}" rel="noopener">{c["a"]} standards ↗</a></p>'
+    upcoming = [ev for ev in EVENTS if ev["slug"] == c["s"]][:4]
+    if upcoming:
+        rows = "".join(f'<li><a href="{e(ev["url"])}"><span>{fmt_date(ev, True)}</span><span>Book →</span></a></li>' for ev in upcoming)
+        next_dates = f'<div class="aside__card aside__dates"><p class="aside__label">Next dates</p><ul>{rows}</ul><a class="small" href="{root}whats-on.html">Full calendar →</a></div>'
+    else:
+        next_dates = f'<div class="aside__card aside__dates"><p class="aside__label">Dates</p><p class="small">No dates listed right now. <a href="{enquire}">Ask us</a> and we\'ll arrange one: we run every course, even for one student.</p><a class="small" href="{root}whats-on.html">See what\'s on →</a></div>'
     rel = [BY_SLUG[s] for s in c.get("rel", []) if s in BY_SLUG]
     rel_html = ""
     if rel:
@@ -216,6 +281,7 @@ def course_page(c):
         <dl class="aside__facts">{facts}</dl>
         {ref}
       </div>
+      {next_dates}
     </aside>
   </div>
 </section>
@@ -268,7 +334,7 @@ def home():
   <img class="hero__bg" src="assets/img/team.jpg" alt="" width="959" height="640">
   <div class="hero__inner wrap">
     <p class="eyebrow">SSI &amp; BSAC dive centre · Kempston, Bedfordshire</p>
-    <h1>From your first breath<br>to <span class="hl">100 metres.</span></h1>
+    <h1>From your first breath to <span class="hl">100&nbsp;metres.</span></h1>
     <p class="lede">Bedfordshire's award-winning scuba centre. Small groups, ex-military attention to detail, and instructors who'll teach you as patiently in the pool as they will on a trimix wreck dive.</p>
     <div class="cta"><a class="btn" href="{SHOP}">Book a course</a><a class="btn btn--ghost" href="courses/index.html">See all {len(COURSES)} courses</a></div>
     <a class="rating" href="https://www.google.com/search?q=Dive+With+Jimmy+Kempston+reviews"><span class="stars" aria-hidden="true">★★★★★</span><span><strong>5.0 on Google</strong> · 20 reviews</span></a>
@@ -288,6 +354,7 @@ def home():
     <ul class="tiles">{cats}</ul>
   </div>
 </section>
+{coming_up(root)}
 <section class="section section--alt">
   <div class="wrap">
     <div class="head head--row"><div><p class="eyebrow">Most popular</p><h2>Where most divers start</h2></div><a class="more" href="courses/index.html">All courses →</a></div>
@@ -321,10 +388,86 @@ def home():
     </div>
   </div>
 </section>
+{reviews()}
+{gallery(root)}
 {club_band(root)}
 {contact_band(root)}'''
     page("index.html", "Dive With Jimmy | Scuba Diving Centre, Kempston, Bedfordshire",
          "Bedfordshire's award-winning SSI and BSAC dive centre. Learn to dive, freedive, go technical or rebreather to 100m. Max 4 students per instructor.", body, "", root)
+
+
+def coming_up(root):
+    if not EVENTS:
+        return ""
+    cards = "".join(event_card(ev, root) for ev in EVENTS[:6])
+    return f'''<section class="section">
+  <div class="wrap">
+    <div class="head head--row"><div><p class="eyebrow">What's on</p><h2>Coming up</h2><p>Courses and sessions Jimmy has booked in. Pick a date and book online.</p></div><a class="more" href="{root}whats-on.html">Full calendar →</a></div>
+    <ul class="evs">{cards}</ul>
+  </div>
+</section>'''
+
+
+GALLERY = [("gallery/clownfish.jpg", "Clownfish in an anemone"), ("photos/wreck-planes.jpg", "Diver over aircraft wreckage"), ("gallery/nudibranch-pink.jpg", "Nudibranch"),
+           ("gallery/soft-coral.jpg", "Soft coral"), ("gallery/leopard-shark.jpg", "Leopard shark"), ("photos/turtle.jpg", "Hawksbill turtle"),
+           ("gallery/telegraph.jpg", "Ship's telegraph on a wreck"), ("gallery/mantis-shrimp.jpg", "Mantis shrimp"), ("gallery/jellyfish.jpg", "Jellyfish"),
+           ("gallery/moray.jpg", "Moray eel"), ("gallery/divers-bw.jpg", "Divers on a wreck"), ("gallery/starfish.jpg", "Starfish and urchin"),
+           ("gallery/heian-maru.jpg", "Name plate on the Heian Maru wreck"), ("gallery/cleaner-shrimp.jpg", "Cleaner shrimp")]
+
+
+def gallery(root, title="Beneath the surface", n=14):
+    items = "".join(f'<li><img src="{root}assets/img/{f}" alt="{e(a)}" loading="lazy"></li>' for f, a in GALLERY[:n])
+    return f'''<section class="section section--alt gallery-sec">
+  <div class="wrap">
+    <div class="head head--center"><p class="eyebrow">From our dives</p><h2>{title}</h2></div>
+    <ul class="gallery">{items}</ul>
+  </div>
+</section>'''
+
+
+def reviews():
+    rs = [("Peter Orton", "Outstanding service, teaching and expertise. Dived with Jimmy and his team in the training pool at Bedford and open water at Stoney Cove."),
+          ("Chris Shrubb", "Just wrapped up three scuba courses back-to-back with Jimmy, and honestly, what a legend."),
+          ("Adan Banga", "I had Jimmy put on my radar a while ago by a chap I bumped into a lot at Wraysbury. Got in touch with him and he was immediately super helpful.")]
+    items = "".join(f'<li class="review"><span class="stars" aria-label="5 stars">★★★★★</span><blockquote>{e(t)}</blockquote><p>{e(n)} · Google review</p></li>' for n, t in rs)
+    return f'''<section class="section">
+  <div class="wrap">
+    <div class="head head--center"><p class="eyebrow">5.0 on Google · 20 reviews</p><h2>What our divers say</h2></div>
+    <ul class="reviews">{items}</ul>
+    <p class="center"><a class="more" href="https://www.google.com/search?q=Dive+With+Jimmy+Kempston+reviews">Read all reviews on Google →</a></p>
+  </div>
+</section>'''
+
+
+def whats_on():
+    root = ""
+    body = page_head(root, "Calendar", "What's on", "Courses, try dives and pool nights Jimmy has booked in. Choose a date to book it online through Scubago, SSI's booking site.", "photos/diver-clear.jpg")
+    if EVENTS:
+        months = {}
+        for ev in EVENTS:
+            months.setdefault(ev["start"][:7], []).append(ev)
+        from datetime import date as d
+        lists = "".join(f'<h2 class="month">{d.fromisoformat(k + "-01").strftime("%B %Y")}</h2><ul class="evs evs--list">{"".join(event_card(ev, root) for ev in v)}</ul>' for k, v in months.items())
+    else:
+        lists = '<p>No sessions are listed right now. Check the live calendar below or get in touch.</p>'
+    body += f'''<section class="section section--tight"><div class="wrap">
+  <div class="whatson">
+    <div>{lists}
+      <p class="small">Dates from Jimmy's SSI calendar, last updated {e(EVENTS_DATA.get("fetched", ""))}. The live calendar below always has the latest.</p>
+    </div>
+    <aside class="note">
+      <h2 class="h3">Can't make these dates?</h2>
+      <p>We run every course, even for one student. Tell us when suits you and we'll arrange it.</p>
+      <p><a class="btn" href="contact.html">Ask about dates</a></p>
+      <p class="small">Every Tuesday is <a href="pool-nights.html">pool night</a> at Robinson Pool, Bedford.</p>
+    </aside>
+  </div>
+  <div class="live">
+    <div class="head head--row"><div><p class="eyebrow">Live from SSI</p><h2>Full calendar</h2></div><a class="more" href="{SCUBAGO}">Open on Scubago →</a></div>
+    <iframe src="{SSI_CAL}" title="Dive With Jimmy events calendar on SSI" loading="lazy"></iframe>
+  </div>
+</div></section>'''
+    page("whats-on.html", "What's On | Dive With Jimmy, Bedfordshire", "Upcoming scuba courses, try dives and pool nights at Dive With Jimmy. Book a date online.", body, "whatson")
 
 
 def club_band(root):
@@ -342,6 +485,14 @@ def contact_band(root):
 
 
 # ---------------------------------------------------------------- simple pages
+def pool_dates():
+    evs = [ev for ev in EVENTS if ev["slug"] == "pool"][:4]
+    if not evs:
+        return ""
+    rows = "".join(f'<li><a href="{e(ev["url"])}"><span>{fmt_date(ev, True)}</span><span>Book →</span></a></li>' for ev in evs)
+    return f'<div class="aside__card aside__dates"><p class="aside__label">Next pool nights</p><ul>{rows}</ul></div>'
+
+
 def pool_nights():
     body = page_head("", "Every Tuesday", "Pool nights at Robinson Pool", "A great social evening for snorkellers, freedivers and scuba divers, with sole use of the dive pit in Bedford.", "photos/diver-clear.jpg")
     body += f'''<section class="section"><div class="wrap split__grid">
@@ -353,6 +504,7 @@ def pool_nights():
     <h2 class="h3">Courses we run on pool nights</h2>
     <ul class="ticks"><li><a href="courses/try-scuba-diving.html">Try Scuba Diving</a></li><li><a href="courses/try-freediving.html">Try Freediving</a></li><li><a href="courses/ssi-snorkel-diver.html">SSI Snorkel Diver</a></li><li><a href="courses/ssi-basic-freediver.html">SSI Basic Freediver</a></li><li><a href="courses/ssi-scuba-skills-update.html">SSI Scuba Skills Update</a></li></ul>
   </div>
+  <div>
   <dl class="ticket">
     <div><dt>When</dt><dd>Tuesdays, 7:00–8:30pm</dd></div>
     <div><dt>Where</dt><dd>Robinson Pool, Bedford</dd></div>
@@ -361,6 +513,8 @@ def pool_nights():
     <div><dt>Cost</dt><dd>£15 <small>· free for Dive Club members and students on a course</small></dd></div>
     <div><dt>Parking</dt><dd>Free</dd></div>
   </dl>
+  {pool_dates()}
+  </div>
 </div></section>'''
     page("pool-nights.html", "Pool Nights | Dive With Jimmy, Bedford", "Tuesday pool nights at Robinson Pool, Bedford, 7–8:30pm. Sole use of the 3.8m dive pit. £15, free for Dive Club members.", body, "pool")
 
@@ -524,6 +678,7 @@ def about():
     <li class="bsac"><a href="https://www.bsac.com/">BSAC<span>training centre</span></a></li>
   </ul>
 </div></section>
+{gallery("", "From our dives around the world")}
 {contact_band("")}'''
     page("about.html", "About Us | Dive With Jimmy", "Meet Jimmy and Emma Soos. Ex-Army, qualified to 100m on open and closed circuit, and SSI Blue Oceans partners.", body, "about")
 
@@ -560,5 +715,5 @@ if __name__ == "__main__":
     home(); courses_index()
     for c in COURSES:
         course_page(c)
-    pool_nights(); gas_fills(); servicing(); hire(); expeditions(); dive_club(); about(); contact()
-    print(f"Built {len(COURSES)} course pages + 10 site pages in {SITE}")
+    whats_on(); pool_nights(); gas_fills(); servicing(); hire(); expeditions(); dive_club(); about(); contact()
+    print(f"Built {len(COURSES)} course pages + 11 site pages, {len(EVENTS)} upcoming sessions in {SITE}")

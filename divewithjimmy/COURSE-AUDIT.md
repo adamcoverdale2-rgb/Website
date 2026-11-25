@@ -48,3 +48,15 @@ Please check the items marked **Confirm** before going live.
 - **Phone link:** the number shown is 07538 051564, but tapping it dials a US number (425-334-5956).
 
 All 45 Square checkout links that do exist were tested and load correctly.
+
+## 4. Prices on Scubago that differ from the website
+
+The new What's on page pulls dates and prices from Jimmy's SSI/Scubago calendar. These prices don't match the course pages:
+
+| Course | Website | Scubago |
+|---|---|---|
+| Try Freediving | £40 | £30 |
+| Diver Stress & Rescue | £500 | £400 |
+| Enriched Air Nitrox | £250 (40% with 2 dives) | £100 ("Enriched Air Nitrox Workshop", likely the no-dives version) |
+
+**Confirm** which is right, then update `src/courses.json` or Scubago.

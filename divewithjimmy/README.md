@@ -8,9 +8,15 @@ python3 -m http.server 8000
 
 ## Pages
 - `index.html`: home page
+- `whats-on.html`: upcoming sessions from Jimmy's SSI/Scubago calendar
 - `courses/index.html`: all 50 courses by category, with search and an SSI/BSAC filter
 - `courses/<course>.html`: one page per course, with price, a Square "Book now" button, facts, what's included, and a link to the SSI or BSAC standards
 - `pool-nights.html`, `gas-fills.html`, `servicing.html`, `equipment-hire.html`, `expeditions.html`, `dive-club.html`, `about.html`, `contact.html`
+
+## What's on (Jimmy's Scubago calendar)
+- `whats-on.html` lists upcoming sessions with "Book this date" buttons that open the right date on Scubago. Below them is the live SSI calendar, which always shows the latest.
+- The home page shows the next 6 sessions. Course pages and the pool nights page show their next dates.
+- Dates come from `src/events.json`. To refresh them, run `python3 src/whatson.py && python3 src/build.py`. Past sessions are dropped automatically at build time.
 
 ## Editing content
 All pages are generated, so don't edit the `.html` files directly.
@@ -24,7 +30,7 @@ Then rebuild:
 python3 src/build.py
 ```
 
-Styling is in `styles.css` and behaviour in `script.js` (menu, course filter, hire price switch, contact form).
+Styling is in `styles.css` (light theme, Mulish font as on the current site) and behaviour in `script.js` (menu, course filter, hire price switch, contact form).
 
 ## Content sources
 Text, prices and Square checkout links come from the current divewithjimmy.com (November 2026). Course details were cross-checked against divessi.com and bsac.com. **See `COURSE-AUDIT.md`** for every correction and the items to confirm before going live.
