@@ -1,25 +1,38 @@
 # Dive With Jimmy — new website
 
-A static, single-page site for [divewithjimmy.com](https://divewithjimmy.com), the SSI and BSAC dive centre in Kempston, Bedfordshire.
-
-- `index.html` — page content
-- `styles.css` — styling (no framework)
-- `script.js` — mobile nav, course tabs, hire price toggle (pool / day / weekend), "Enquire" buttons that prefill the form, and an enquiry form that opens the visitor's email app addressed to info@divewithjimmy.com
-- `assets/img/` — photos and logos copied from the current site and resized
-
-No build step. Open `index.html` directly, or serve the folder:
+A static, multi-page site for [divewithjimmy.com](https://divewithjimmy.com), the SSI and BSAC dive centre in Kempston, Bedfordshire. No server or framework is needed: open `index.html`, or serve the folder:
 
 ```sh
 python3 -m http.server 8000
 ```
 
-## Content
-Copy, course list, pool night details and hire prices come from the current divewithjimmy.com (November 2026).
+## Pages
+- `index.html`: home page
+- `courses/index.html`: all 50 courses by category, with search and an SSI/BSAC filter
+- `courses/<course>.html`: one page per course, with price, a Square "Book now" button, facts, what's included, and a link to the SSI or BSAC standards
+- `pool-nights.html`, `gas-fills.html`, `servicing.html`, `equipment-hire.html`, `expeditions.html`, `dive-club.html`, `about.html`, `contact.html`
 
-## Check before going live
-- **Phone number.** The current site shows 07538 051564, but its call link dials a US number (425-334-5956), which looks like a template mistake. This site uses 07538 051564.
-- **Course prices.** Only the Open Water price (£400–£800, shown as "From £400") is listed on the current site. Add others if you want them shown.
-- **Gas fill prices** and the **Dive Club** membership fee aren't included. Those pages weren't copied over.
-- **Reviews.** The hero links to the Google reviews (5.0, 20 reviews). Update the count as it grows.
-- **Booking.** "Book a course" (header and hero), "Book a pool night" and the shop links go to the Square shop at divewithimmy.square.site. That's the shop's real address, spelled without the J; divewithjimmy.square.site returns a 404. Open Water "Book now" goes straight to the Open Water checkout the current site uses. Course cards and "Join the club" still open the enquiry form, because no matching shop products could be confirmed. Swap in direct checkout links as products are added.
-- **Pool nights** are booked through the SSI calendar on the current site. Make sure the Square shop sells them, or point that button back at the SSI calendar.
+## Editing content
+All pages are generated, so don't edit the `.html` files directly.
+
+- **Courses:** edit `src/courses.json` (text, facts, prices, Square checkout codes, related courses)
+- **Other pages:** edit the functions in `src/build.py`
+
+Then rebuild:
+
+```sh
+python3 src/build.py
+```
+
+Styling is in `styles.css` and behaviour in `script.js` (menu, course filter, hire price switch, contact form).
+
+## Content sources
+Text, prices and Square checkout links come from the current divewithjimmy.com (November 2026). Course details were cross-checked against divessi.com and bsac.com. **See `COURSE-AUDIT.md`** for every correction and the items to confirm before going live.
+
+Photos are Dive With Jimmy's own, copied from the current site and resized.
+
+## Booking
+- Course "Book now" buttons go straight to that course's Square checkout.
+- Courses without their own checkout link show "Enquire", which opens the contact form with the course filled in.
+- "Book a course" and "Book a pool night" go to the Square shop (divewithimmy.square.site; the shop's real address has no J).
+- The contact form opens the visitor's email app, addressed to info@divewithjimmy.com.
